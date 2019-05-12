@@ -1,0 +1,190 @@
+*{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+#newActivity{
+	background: url("../img/bg.png") no-repeat left top;
+	background-size: 100% 100%;
+	width:100%;
+}
+
+#newActivity span{
+	color:rgb(255, 110, 74);
+	font-family: 微软雅黑;
+	position: fixed;
+	margin:3.5rem -13rem;
+}
+
+.close{
+	width: 2.1rem;
+	height: 2rem;
+	float: right;
+	margin:1rem 1rem;
+}
+
+.main{
+	/* background-color: red; */
+	height: 35.3rem;
+	overflow: hidden;
+}
+
+.inputbox{			
+	width: 100%;
+	height: 26.9rem;
+}
+
+.button{			
+	float: left;
+	width: 100%;
+	margin-top: 15%;
+}
+
+.prior{
+	float: left;			
+	width: 2.3rem;
+	height: 1.5rem;
+	margin-top: -2.1rem;
+	margin-left: 9%;
+}
+
+.priors{
+	float: left;			
+	margin-top: -4.4rem;
+	margin-left: 6%;
+	width: 5.5rem;
+	height: 5.5rem;
+}
+
+.next{
+	float: right;
+	width: 5.5rem;
+	height: 5.5rem;
+	margin-right: 4%;
+	margin-top: -4.4rem;
+}
+
+h6,h3,h5{
+	font-family:'腾祥沁圆简-W5';
+}
+
+h6{
+	color: #90d1d4;
+	font-size: 1.5rem;
+}
+
+h3{
+	color: #188989;
+	font-size: 2.2rem;
+	margin-top: 0.6rem;
+}
+
+h5{
+	color: #50b7b1;
+	font-size: 1.75rem;
+	margin-top: 3.6rem;
+}
+
+input{	 
+	border: none;
+	border-bottom: 1.5px solid #ccc;	 
+	outline: none;
+	width: 100%;
+	height: 3.1rem;
+	font-size: 1.85rem;
+	color: #188989;
+	font-family: '微软雅黑';
+}
+
+.el-input{
+	border: none;
+	border-bottom: 1.5px solid #ccc;	 
+	outline: none;
+	width: 100%;
+	height: 3.1rem;
+	font-size: 1.85rem;
+	color: #188989;
+	font-family: '微软雅黑';
+	/*background: url(../img/pass.png) no-repeat;
+	background-size: 2rem 1.3rem;
+	background-position: 95% 65%;*/
+}
+
+input:focus:not(.direction){
+	border-image: linear-gradient(to right, #8dcfd1 , #50b7b1 , #188989) 50;
+}
+
+.direcolor{
+	border-image: linear-gradient(to right, #8dcfd1 , #50b7b1 , #188989) 50;
+}
+
+.inputbox p{	
+	margin-top:0.75rem;
+	position: relative;
+	float: left;
+	font-size: 1.5rem;
+	color: rgb(207, 72, 95);
+}
+
+.more{
+	position: absolute;
+	margin-top: 1rem;
+	margin-left: 17.5rem;
+	width: 2.2rem;
+	height: 1.5rem;
+}
+
+.dire{
+	background-color:white;
+	position: absolute;
+	width: 21rem;
+	height: 8.5rem;
+	overflow: auto;	
+}
+
+.dire li{
+	line-height: 2.1rem;
+	height: 2.1rem;
+	font-size: 1.5rem;
+	color: #188989;
+	font-family: "微软雅黑";
+}
+
+.finish{
+	width: 100%;
+	height: 100%;
+}
+
+.ok{
+	position: absolute;
+	background-color: #fff;
+	width: 100%;
+	height: 100%;
+}
+
+.toChange1-enter-active, .toChange1-leave-active, .toChange2-enter-active, .toChange2-leave-active, .toChange3-enter-active, .toChange3-leave-active{
+	transition: opacity 0.5s;
+}
+
+.toChange1-enter, .toChange1-leave-to, .toChange2-enter, .toChange2-leave-to, .toChange3-enter, .toChange3-leave-to{
+	opacity: 0;
+
+}
+
+.d-date-time-header{
+    background: #50b7b1 !important;
+}
+
+.d-date-time-button a{
+	color: #50b7b1 !important;
+}
+
+.d-date-time-button a:first-child{
+	display:none !important;
+}
+
+.start,.end{
+	    color:transparent;
+	    text-shadow:0 0 0 #188989;
+}

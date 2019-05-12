@@ -1,13 +1,13 @@
 <template>
-    <div id="index">
+    <div id="index" ref="homePage">
       <!-- 日历 -->
         <div id="calendar"> 
-            <!-- v-bind:style="{backgroundImage: 'url(' + albumpic_big + ')'}" -->
             <div class="box">
             <div class="fold-btn" @click="isShow=!isShow">
-                <span>{{nowyear}}</span>
-                {{ isShow ? '︿' : '﹀' }} <span :class="{topArrow: isShow, bottomArrow: !isShow}"></span>
+                <span>{{nowyear}}</span>                
+                {{ isShow ? '︿' : '﹀' }} <span :class="{topArrow: isShow, bottomArrow: !isShow}"></span>              
             </div>
+            <div class="all-btn" @click="getAllMsg()"></div>
             <div class="date-title" >
                 <div>日</div>
                 <div>一</div>
@@ -59,63 +59,49 @@
         </div>
         <br>
         <!-- 信息显示 -->
-        <div class="showDiv" v-show="!downIcon">
-          <b>{{MonthAndDay}}</b>
-          <br><br><br><br>        
-          <div id="message-container" >
-              <ol>
-                  <li>
-                      <p id="content">{{content}}</p>
-                      <p id="place" >{{place}}</p>
-                      <div id="dele" @click="setMaskShow">
+        <div class="show-box" v-show="!downIcon">
+          <b :style="{display: `${allHide}`}">{{MonthAndDay}}</b>
+          <b :style="{display: `${allShow}`}">全部预约信息</b>   
+          <br><br>
+          <div id="message-container" :style="{height:msgHeight}">
+              <ul :style="{height:ulHeight}">
+                  <li v-for="(message) in messages">
+                      <div class="cBox">
+                        <p id="content" :style="{display: `${allHide}`}">●&nbsp;{{message.content}}</p>
+                        <p id="date" :style="{display: `${allShow}`}">●&nbsp;{{message.date}}</p>
+                        <p id="place" :style="{display: `${allHide}`}">{{message.place}}</p>
+                        <p id="content-place" :style="{display: `${allShow}`}">{{message.content}}&nbsp;{{message.place}}</p>
                       </div>
-                      <div id="time">
-                          <p id="start" >{{start}}</p>
-                          <p id="end" >{{end}}</p>
+                      <div style="display:none">{{message.date}}{{message.id }}{{message.mark }}</div>
+                      <div id="dele" @click="setMaskShow();getId(message.id,message.mark)">
+                      </div>
+                      <div class="time">
+                          <p id="start" >{{message.start }}</p>
+                          <p id="end" >{{message.end }}</p>
                       </div>
                   </li>
-                  <li>
-                      <p id="content">{{content}}</p>
-                      <p id="place" >{{place}}</p>
-                      <div id="dele" @click="setMaskShow">
-                      </div>
-                      <div id="time">
-                          <p id="start" >{{start}}</p>
-                          <p id="end" >{{end}}</p>
-                      </div>                   
-                  </li>
-                  <li>
-                      <p id="content">{{content}}</p>
-                      <p id="place" >{{place}}</p>
-                      <div id="dele" @click="setMaskShow">
-                      </div>
-                      <div id="time">
-                          <p id="start" >{{start}}</p>
-                          <p id="end" >{{end}}</p>
-                      </div>                   
-                  </li>
-              </ol>
+              </ul>
           </div>
-          <div class="add" @click="addActivity()">
+          <div class="add" @click="addActivity()">           
             <div class="add-logo"></div>
-            <p>添加活动</p>
+            <p style="font-weight:540; color:#126964; font-size:1rem;">添加活动</p>          
           </div>
         </div>
-        <!-- 日历下拉显示的隐藏div        -->
-        <div id="hiddenDiv" v-show="downIcon">
+        <!-- 日历下拉显示的隐藏div    -->
+        <div id="hidden-box" v-show="downIcon">
           <br>
           <span>{{MonthAndDay}}</span>
-          <div class="add2-logo"></div>
+          <div class="add2-logo" @click="addActivity()"></div>
         </div>
         <!-- 删除框和遮罩层 -->
         <div class="dele-container">
-          <div class="mask" v-show="maskShow" @click="setMaskShow"></div>
+          <div class="mask" v-show="maskShow" @click="setMaskShow()"></div>
           <div class="dele-box" id="dele-box" v-show="maskShow">
-              <span style="color:white; font-size:1.5rem; margin:0rem -1rem; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;取消预约</span>
-              <button @click="setMaskShow" class="close-btn"></button>
-              <input type="text" id="ID-text" name="" placeholder="标识" > 
+              <span style="color:white; font-size:1.5rem; margin:0rem -1rem; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;取消预约</span>
+              <button @click="setMaskShow();close()" class="close-btn"></button>
+              <input type="text" id="mark" class="ID-text" name="" placeholder="标识" v-model="markText"> 
               <!-- v-model="text_content"  -->
-              <button @click="setMaskShow" class="yes-btn">&nbsp;&nbsp;&nbsp;确定</button>              
+              <button @click="deleMessage()" class="yes-btn">确定</button>              
           </div>
         </div>
     </div>
@@ -128,24 +114,9 @@
       const year = date.getFullYear()
       const month = date.getMonth() + 1
       const day = date.getDate()
-      const nowday = year + "年" + month + "月" + day + "日"   
-      
-      //模拟数据
-      const message = [
-        {
-          content : "技术晚修自习",
-          place : "办公室",
-          start : "19:00",
-          end : "21:00"
-        },
-        {
-          content : "视觉开会",
-          place : "办公室",
-          start : "15:00",
-          end : "17:00"
-        },
-      ]
+      const nowday = year + "年" + month + "月" + day + "日"              
       return {
+        clientHeight:'',//屏幕高度
         y: year,
         m: month,
         d: day,
@@ -157,62 +128,137 @@
         middleDivCalendar: {year: 2018, month: 7}, // 中间div显示的日历
         nextMiddleDivCalendar: {year: 2018, month: 8}, // 最后一个div显示的日历
         MonthAndDay:nowday   ,
-        albumpic_big : "../assets/bg1.png" ,
-        show : document.getElementById('showDiv'),
-        hidden : document.getElementById('hiddenDiv'),
-        inputData: [],
-        newItem: '' ,
-        content : message[1].content,
-        place : "办公室",
-        start : "19:00",
-        end : "21:00",
+        show : document.getElementById('show-box'),
+        hidden : document.getElementById('hidden-box'),
         maskShow: false,
         downIcon :false,
-        clickValue : true
+        clickValue : true, 
+        isDay : false, 
+        msgHeight : '0rem' ,  //显示信息框的高度
+        ulHeight : '48.6%' ,
+        markText : '',
+        indexId : '',//当前id
+        indexMark : '',//当前标识,
+        allHide : "block",
+        allShow : "none",//当显示全部，样式改变
+        //模拟数据
+        fakeMessages : [
+            {
+              content : "技术晚修自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年4月6日",
+              id : "1",
+              mark : "666666"
+            },
+            {
+              content : "tt自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年3月4日",
+              id : "2",
+              mark : "555555"
+            },
+            {
+              content : "77自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年4月17日",
+              id : "3",
+              mark : "444444"
+            },
+            {
+              content : "55自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年3月20日",
+              id : "4",
+              mark : "666688"
+            },
+            {
+              content : "55自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年4月12日",
+              id : "4",
+              mark : "666777"
+            },
+             {
+              content : "55自习",
+              place : "办公室",
+              start : "19:00",
+              end : "21:00",
+              date : "2019年4月16日",
+              id : "4",
+              mark : "555577"
+            },
+          ],
+          messages : [] //存放后台数据  
       }
     },
-    computed: {
+
+    computed: {    
       //计算当前日期,忽略warn
       // eslint-disable-next-line
       MonthAndDay: {
         set: function() {          
-        }   
+        }
     },
     },
-    
     mounted () {
-      this.middleDivCalendar = {year: new Date().getFullYear(), month: new Date().getMonth()+1}
-      // 当日历收起的时候，日历高度刚好只够显示两行日期
-      this.calendarContainerHeight = 2*(document.querySelector('.date-block').getBoundingClientRect().height) + 'px'
-      //遮罩层高度获取
-      // this.$refs.mask.style.height = doc.getElementById('app').clientHeight + 'px'
+      //请求后台数据
+      const url="39.108.0.22/api/store"
+      this.$ajax.get(url).then(function (response) {
+        message = JSON.parse(response)
+      })
+      .catch(function (error) {
+      console.log(error);
+      });
+      //调用
+      this.getMessage(); 
+      // 获取浏览器可视区域高度
+      this.clientHeight =   `${document.documentElement.clientHeight}`          //document.body.clientWidth;
+      
+      window.onresize = function temp() {
+        this.clientHeight = `${document.documentElement.clientHeight}`;
+      };
+     
+      this.middleDivCalendar = {year: new Date().getFullYear(), month: new Date().getMonth()+1 }
+      // 当日历收起的时候，日历高度刚好只够显示三行日期
+      this.calendarContainerHeight = 3*(document.querySelector('.date-block').getBoundingClientRect().height) + 'px'
       this.$nextTick(function () {
         // DOM更新完成后
-        const today = document.querySelector('.todayBlock')
-        today.scrollIntoView()
+        const today = document.querySelector('.todayBlock')      
+        today.scrollIntoView()    
+        console.log(this.calendarContainerHeight)
       })
+
+      
     },
     watch: {
+      // 如果 `clientHeight` 发生改变，这个函数就会运行
+      clientHeight: function () {
+      this.changeFixed(this.clientHeight)
+      },
+
       isShow(){
         //切换div
         this.downIcon = !this.downIcon
-        //切换背景图
-        this.albumpic_big = "../assets/bg2.png"
-        //  const img = document.getElementById('calendar')
-        //  console.log(img)
-        // this.bgImg.style.background.url ='../assets/bg2.png' //背景图切换失败
-        
+
         // 监听日历的收起与展开，改变日历的高度
         const height = document.querySelector('.date-block').getBoundingClientRect().height + 'px'
-        this.calendarContainerHeight = this.isShow ? '22rem' : height
+        this.calendarContainerHeight = this.isShow ? '25rem' : height
       
         if (!this.isShow){
-         
-          this.albumpic_big = "../assets/bg1.png"
           const today = document.querySelector('.todayBlock')
           today.scrollIntoView()
-          this.calendarContainerHeight = 2*(document.querySelector('.date-block').getBoundingClientRect().height) + 'px'
-          // img.style.background = "url('../assets/bg1.png')" 
+          this.calendarContainerHeight = 3*(document.querySelector('.date-block').getBoundingClientRect().height) + 'px'
+          console.log(this.calendarContainerHeight)
         }
       },
       middleDivCalendar () { // 监听中间div日历的时间,根据中间div的日历获取上下div的日历
@@ -220,7 +266,11 @@
         this.nextMiddleDivCalendar = this.getNextMonth(this.middleDivCalendar.month, this.middleDivCalendar.year)
       }
     },
+    
     methods: {
+      changeFixed(clientHeight){   //动态修改样式
+        this.$refs.homePage.style.height = clientHeight+'px';
+     },
       getPrevMonth: function (m, y) {  // 获取上一个月
         let month = m || 11
         let year = y
@@ -264,8 +314,8 @@
           }
         }, 100)
       },
-      //点击改变日期
-      changeDay(event){
+      // 点击改变日期
+      changeDay(event){       
         const n = (event.target.parentElement.parentElement.previousElementSibling.innerHTML).substring(0,4)
         const y = parseInt(event.target.parentElement.parentElement.previousElementSibling.innerHTML.substring(5,8))
         const r = event.target.innerHTML
@@ -273,30 +323,134 @@
         if(n < this.y || ( n == this.y && ( y < this.m || ( y == this.m && r < this.d ))))
         {
           this.clickValue = false
-          console.log(this.clickValue)
         }
+        else
+        {
+          this.clickValue = true
+        }       
         this.MonthAndDay = n + "年" + y + "月" + r + "日"
       },
+
       //获取点击日期的预约信息
       getMessage(){
-        
+        this.messages = []
+        this.isDay = false
+        this.msgHeight = '0rem'
+        this.allHide = "block"
+        this.allShow = "none"
+        //循环获取该日期预约内容
+        let array = this.fakeMessages
+        for(let i=0;i<array.length;i++)
+        {
+          let obj = array[i].date       
+          const toStr1 = JSON.stringify(obj) //对象->数组去比较
+          const toStr2 = JSON.stringify(this.MonthAndDay)
+          if(toStr1 == toStr2)
+          {
+            this.messages.push(array[i])
+          }
+        }
+        if(this.messages.length == 1) 
+        {
+          this.ulHeight = '91.6%'
+          this.msgHeight = '7rem'
+        }
+        else if(this.messages.length > 1)
+        {
+          this.ulHeight = '48.6%'
+          this.msgHeight = '14rem'
+        }       
       },
+
+      //获取全部预约信息
+      getAllMsg() {
+        this.messages = []
+        this.isDay = false
+        this.msgHeight = '0rem'
+        this.allHide = "none"
+        this.allShow = "block"
+        //循环获取该日期预约内容
+        let array = this.fakeMessages
+        for(let i=0;i<array.length;i++)
+        {
+            this.messages.push(array[i])
+        }
+        if(this.messages.length == 1) 
+        {
+          this.ulHeight = '91.6%'
+          this.msgHeight = '7rem'
+        }
+        else if(this.messages.length > 1)
+        {
+          this.ulHeight = '48.6%'
+          this.msgHeight = '14rem'
+        }
+      },
+
       //div隐藏和显示
       setMaskShow(){
+          this.maskShow = !this.maskShow;         
+      },
+      close() {
+          this.markText = "" //清空输入框
+      },
+      getId(id,mark) {
+          this.indexId = id
+          this.indexMark = mark
+      },
+      addActivity(){
+        if(this.clickValue == true)//选定的时间符合
+        {
+          this.$router.push({
+            path : '/newActivity', //路由跳转页面
+            name : 'newActivity',
+            query : {
+              date : this.MonthAndDay
+            }
+          })
+        }
+        if(this.clickValue == false)//选定的时间符合
+        {
+          alert("过去的时间不能预约哦！");
+        }
+        
+      },
+      deleMessage() {        
+        if(this.indexMark == this.markText) //如标识符匹配，传要删除的预约信息id给后端
+        {
+          const url = "39.108.0.22/api/store";
+          this.$ajax
+          .post(url, {
+            id: this.indexId
+          })
+          .catch(err => {
+              console.log(err);
+          });
+          alert("删除成功！")
+          //关闭弹窗
           this.maskShow = !this.maskShow;
+        }
+        else
+        {
+          alert("请输入正确的标识！")          
+        }
+        this.markText = "" //清空输入框
       }
+      
     },
   }
 </script>
  
 <style lang="less" scoped>
   #index{
-
+    width:100%;
+    background:url("../assets/BG.png") no-repeat left top;
+    background-size:100% 100%;
   }
   #calendar{   
     background:url("../assets/bg2.png");
     background-repeat: no-repeat;
-    background-size:100% 100%;  
+    background-size:100% 100%;
   }
   .box{
     
@@ -315,19 +469,30 @@
       flex: 1;
     }
   }
-  .calendar-container{
-    
+  .all-btn {
+    display: flex;
+    background: url("../assets/all.png");
+    float: right;
+    width: 3rem;
+    height: 1.3rem;
+    margin:-4.5rem 0rem;
+    background-size:100%;
+
+  }
+  .calendar-container{    
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
     transition: height 0.5s ease;
     margin:2rem 0;
+    &::-webkit-scrollbar { //去除滚动条，设置滚动条的背景颜色为透明 
+      background-color: transparent;
+      display:none;
+    }
     .date-container {
     .date-header {
       text-align:left;
       padding: 1.5rem 0;
       color:white;
       font-size:2rem;
-      
     }
     .date-board {
       display: flex;
@@ -342,13 +507,14 @@
         
       }
       span{
+        font-size:1.2rem;
         color:white;
         border-radius: 5rem;
         background:#48a2a1;
-        height:1.5rem;
-        width:1.5rem;
+        height:2rem;
+        width:2rem;
         display: block;
-        line-height: 1.5rem;
+        line-height: 2rem;
         opacity:0.7;
         margin:auto;
       }
@@ -363,10 +529,11 @@
   }
   }
   .fold-btn {
-    display: flex;
+    width:5rem;
+    margin:-1rem 12rem;
     align-items: center;
     justify-content: center;
-    padding: 2.0rem 0;
+    padding: 3rem 0;
     color:white;
     .topArrow {
       font-size: 0;
@@ -384,45 +551,70 @@
     }    
   }
   #message-container{
-    height:10rem;
+    height:16rem;
     overflow-y: scroll;
     // -webkit-overflow-scrolling: touch; //滚动流畅
     transition: height 0.5s ease;
-    ol{
-      list-style:none;
+     &::-webkit-scrollbar { //去除滚动条，设置滚动条的背景颜色为透明 
+      background-color: transparent;
+      display:none;
+    }
+    ul{
+      line-height:2rem;
       margin:auto;
-      width:90%;
-      height:50%;
+      width:95%;
+      height:48.6%;
     }
     li{
-      margin:auto;
+      margin:0.2rem auto;
       width:100%;
-      height:90%;
-      box-shadow: 0.05rem 0.05rem 0.5rem 0.05rem #bec0c0;
+      height:99%;
+      box-shadow: 0.05rem 0.02rem 0.2rem 0.0rem #bec0c0;
+    }
+    p{
+      font-size:1.3rem;
     }
   }
-  #time{
+  #content,#date{
+    font-size:1.5rem;
+    font-weight:540; 
+    color:#126964;
+  }
+  #place,#content-place{
+    float:left; 
+    margin:0rem 1.3rem;
+  }
+  .cBox{
+    float:left;
+    margin:1.5rem 2rem;
+  }
+  .time{
       float: right;
-      margin:-12% 20%;
+      margin:1.5rem 0rem;
   }
   #dele{
       float: right;
-      width: 25px;
-      height: 26px;
-      margin:-11% 8%;
+      width: 7%;
+      height: 31%;
+      margin:2.3rem 1.5rem;
       background: url("../assets/delelogo.png");
+      background-size:100%;
   }
   #add{
     margin:0rem 0rem;
     display: flex;
+    p{
+      font-size:1.3rem;
+    }   
   }
   .add-logo{
     background:url("../assets/add.png");
-    height:3.2rem;
-    width:3.2rem;
+    height:3rem;
+    width:3rem;
+    background-size:98%;
     margin:auto;
   }
-  #hiddenDiv{
+  #hidden-box{
     box-shadow: 0.05rem 0.05rem 0.5rem 0.05rem #bec0c0;
     border-radius:0.5rem;
     margin:auto;
@@ -438,14 +630,14 @@
   }
   .add2-logo{
     background:url("../assets/add2.png");
-    height:2rem;
-    width:2rem;
+    height:2.2rem;
+    width:2.2rem;
+    background-size:100%;
     float:right;
     margin:0rem 2rem;
   }
 .dele-container{
-    width: 100%;
-    height: 100%;
+    
 }
 .mask{
     width: 100%;
@@ -457,32 +649,35 @@
     opacity: 0.7;
 }
 .dele-box{
-    background:url("../assets/dele1.png");
+    text-align:center;
+    background:url("../assets/dele1.png") no-repeat;
+    background-size:100%;
     position: fixed;
-    width: 19rem;
-    height: 20rem;
+    width: 24rem;
+    height: 24rem;
     line-height: 8rem;
     top: calc(50% - 9rem);
-    left: calc(50% - 9rem);
+    left: calc(50% - 10.5rem);
 }
 .close-btn{
   background:url("../assets/delelogo2.png");
-  width: 1rem;
-  height: 1.1rem;
-  margin:2.3rem 3.2rem;
+  background-size:97%;
+  width: 1.8rem;
+  height: 1.9rem;
+  margin:3rem 3.6rem;
   float:right;
   outline:none;
 }
-#ID-text{
-  width:11.5rem;
-  height:2rem;
+.ID-text{
+  text-align:center;
+  width:15rem;
+  height:3rem;
   background:white;
-  border-radius:1.3rem;
-  margin:-1rem 3rem;
+  border-radius:1.5rem;
+  margin:0rem 3.5rem;
   display: flex;
-  outline:none;
-  font-size:1rem;
-  font-family:"微软雅黑";
+  border:none;
+  font-size:1.8rem;
   color:#66bab7;
  
 } 
@@ -494,13 +689,14 @@
 }
 .yes-btn{
   font-family:"微软雅黑";
-  width:3.2rem;
-  height:1.5rem;
+  width:5rem;
+  height:2rem;
   background:#126964;
   color:white;
-  display: flex;
+  display: block;
   outline:none;
   border-radius:1.3rem;
-  margin:3rem 6.9rem;
+  margin:3rem 8.7rem;
+  text-align: center;
 }
 </style>

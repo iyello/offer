@@ -1,26 +1,40 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png">
-    <router-link to="/foo" tag="li">foo</router-link>
-    <li>foo</li>
-    <router-view></router-view> -->
-    <!-- 首页 -->
-    <index></index>
+    <transition :name="transitionName">  
+      <router-view class="child-view"></router-view>  
+    </transition> 
+    <!-- 首页 -->   
   </div>
 </template>
 
 <script>
-import index from './views/index.vue'
 
 export default {
   name: 'app',
   components: {
-    index
   },
   data() {
     return {
+      clientHeight:'',
       messages: {}
     };
+  },
+  mounted(){
+   
+  },
+  watch:{
+     //监听路由的路径，可以通过不同的路径去选择不同的切换效果   
+    '$route' (to, from) {  
+      if(to.path == '/index'){  
+        this.transitionName = 'slide-right';  
+      }else{  
+        this.transitionName = 'slide-left';  
+      }  
+    }  
+     
+  },
+  method:{
+     
   },
   computed: {
   }
@@ -29,22 +43,41 @@ export default {
 
 <style>
 *{margin: 0;padding: 0;border:0;}
+
+.child-view {  
+  position: absolute;  
+  left: 0;  
+  top: 0;  
+  width: 100%;  
+  height: 100%;  
+  transition: all .5s cubic-bezier(.55,0,.1,1);  
+}  
+.slide-left-enter, .slide-right-leave-active {  
+  opacity: 0;  
+  -webkit-transform: translate(30px, 0);  
+  transform: translate(30px, 0);  
+}  
+.slide-left-leave-active, .slide-right-enter {  
+  opacity: 0;  
+  -webkit-transform: translate(-30px, 0);  
+  transform: translate(-30px, 0);  
+}  
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family:sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height:38.5rem;
-  /* background-image:url(./assets/bg.jpg); */
-  background-size:100%;
+  
 }
 #app b {
   font-family:"微软雅黑";
   display: block;
-  color:darkcyan;
+  color:#126964;
   font-size:2rem;
+  font-weight:600;
   float:left;
-  margin:0rem 2rem;
+  margin:-1rem 2rem;
 }
 </style>
