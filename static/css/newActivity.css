@@ -5,7 +5,9 @@
 }
 
 #newActivity{
-	background: url("../img/bg.png") no-repeat left top;
+	position: absolute;	
+	background: url("../img/bg.png") no-repeat;
+	background-color:white;
 	background-size: 100% 100%;
 	width:100%;
 }

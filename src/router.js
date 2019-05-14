@@ -25,6 +25,11 @@ export default new Router({
       path:'/newActivity',
       component:newActivity 
    },
+   {
+      name:'success',
+      path:'/success',
+      component:newActivity 
+   },
     
   ]
 })

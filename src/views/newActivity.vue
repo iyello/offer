@@ -1,5 +1,5 @@
 <template>
-  <div id="newActivity">
+  <div id="newActivity" ref="addPage">
     <img class="close" @click="close" src="../../static/img/close.png">
     <div v-if="unsubmit" style="margin:5rem 3.5rem;">     
       <div class="main">
@@ -145,7 +145,7 @@
       <div class="button">
         <img @click="priorclick" v-if="btn" id="prior" class="prior" src="../../static/img/prior.png">
         <img @click="priorsclick" v-if="btns" class="priors" src="../../static/img/priors.png">
-        <img @click="nextclick" id="next" class="next" src="../../static/img/next.png">
+        <img @click="nextclick(),clickJump()" id="next" class="next" src="../../static/img/next.png">
       </div>
     </div>
 
@@ -216,10 +216,13 @@ export default {
       warn1: "",
       warn2: "",
       warn3: "",
+      count:"",//倒计时
     };
 	},
 	mounted()
 	{
+    //防止安卓软键盘使布局乱
+
     //路由传送日期
       let routerParams = this.$route.query.date
       this.MonthAndDay = routerParams
@@ -382,6 +385,27 @@ export default {
           (this.unsubmit = false), (this.submitted = true);
         }
       }
+    },
+    //几秒后进入跳转页面
+    clickJump(){
+        const timejump = 5;
+        if(this.submitted == true) {
+          if(!this.timer){
+            this.count = timejump ;
+            this.show = false;
+            this.timer = setInterval(()=>{
+            if(this.count > 0 && this.count <= timejump ){
+                this.count--;
+            }else{
+                this.show = true;
+                clearInterval(this.timer);
+                this.timer = null;
+                //跳转的页面写在此处
+                this.$router.push({path: '/index'});
+              }
+            },100)
+          }
+        }
     },
     priorclick() {
 			this.$router.push('/index') //路由跳转页面 
