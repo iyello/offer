@@ -1,5 +1,5 @@
 module.exports = {
     devServer:{
-        host: '172.31.199.49'
+        host: '172.31.199.41'
     }
 }

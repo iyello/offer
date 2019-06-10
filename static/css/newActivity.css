@@ -2,6 +2,7 @@
 	margin: 0;
 	padding: 0;
 	border: 0;
+	
 }
 
 #newActivity{
@@ -27,7 +28,7 @@
 }
 
 .main{
-	/* background-color: red; */
+	width: 85%;
 	height: 35.3rem;
 	overflow: hidden;
 }
@@ -48,13 +49,12 @@
 	width: 2.3rem;
 	height: 1.5rem;
 	margin-top: -2.1rem;
-	margin-left: 9%;
 }
 
 .priors{
 	float: left;			
-	margin-top: -4.4rem;
-	margin-left: 6%;
+	margin-top: -4.2rem;
+	margin-left: -1rem;
 	width: 5.5rem;
 	height: 5.5rem;
 }
@@ -63,12 +63,13 @@
 	float: right;
 	width: 5.5rem;
 	height: 5.5rem;
-	margin-right: 4%;
-	margin-top: -4.4rem;
+	margin-right: -1rem;
+	margin-top: -4.2rem;
 }
 
-h6,h3,h5{
+h6,h3,h5,.dire li{
 	font-family:'腾祥沁圆简-W5';
+	text-align: left;
 }
 
 h6{
@@ -127,11 +128,13 @@ input:focus:not(.direction){
 	float: left;
 	font-size: 1.5rem;
 	color: rgb(207, 72, 95);
+	z-index: 1;
 }
 
 .more{
-	position: absolute;
-	margin-top: 1rem;
+	position: relative;
+	float: left;
+	margin-top: -2.5rem;
 	margin-left: 17.5rem;
 	width: 2.2rem;
 	height: 1.5rem;
@@ -140,14 +143,15 @@ input:focus:not(.direction){
 .dire{
 	background-color:white;
 	position: absolute;
-	width: 21rem;
-	height: 8.5rem;
+	width: 20.7rem;
+	height: 9rem;
 	overflow: auto;	
+	z-index: 999;
 }
 
 .dire li{
-	line-height: 2.1rem;
-	height: 2.1rem;
+	line-height: 2.3rem;
+	height: 2.3rem;
 	font-size: 1.5rem;
 	color: #188989;
 	font-family: "微软雅黑";
@@ -184,9 +188,4 @@ input:focus:not(.direction){
 
 .d-date-time-button a:first-child{
 	display:none !important;
-}
-
-.start,.end{
-	    color:transparent;
-	    text-shadow:0 0 0 #188989;
 }

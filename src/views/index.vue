@@ -26,7 +26,7 @@
                         :class="{todayBlock: i === 1}"
                         v-for="i in getMonthDayByMonthYear(preDivCalendar.month, preDivCalendar.year)"
                         :key="i">
-                    <span @click="changeDay($event);getMessage()">{{ i }}</span>
+                    <span @touchstart="changeDay($event);getMessage()">{{ i }}</span>
                     </div>
                 </div>
                 </div>
@@ -38,7 +38,7 @@
                         :class="{todayBlock: i === 1}"
                         v-for="i in getMonthDayByMonthYear (middleDivCalendar.month, middleDivCalendar.year)"
                         :key="i">
-                    <span @click="changeDay($event);getMessage()">{{ i }}</span>
+                    <span @touchstart="changeDay($event);getMessage()">{{ i }}</span>
                     </div>
                 </div>
                 </div>
@@ -50,7 +50,7 @@
                         :class="{todayBlock: i === 1}"
                         v-for="i in getMonthDayByMonthYear (nextMiddleDivCalendar.month, nextMiddleDivCalendar.year)"
                         :key="i">
-                    <span @click="changeDay($event);getMessage()">{{ i }}</span>
+                    <span  @touchstart="changeDay($event);getMessage()">{{ i }}</span>
                     </div>
                 </div>
                 </div>
@@ -65,7 +65,7 @@
           <br><br>
           <div id="message-container" :style="{height:msgHeight}">
               <ul :style="{height:ulHeight}">
-                  <li v-for="(message) in messages">
+                  <li v-for=" message in messages">
                       <div class="cBox">
                         <p id="content" :style="{display: `${allHide}`}">●&nbsp;{{message.content}}</p>
                         <p id="date" :style="{display: `${allShow}`}">●&nbsp;{{message.date}}</p>
@@ -108,6 +108,7 @@
 </template>
  
 <script>
+import axios from 'axios';
   export default {    
     data () {     
       const date = new Date()
@@ -141,6 +142,9 @@
         indexMark : '',//当前标识,
         allHide : "block",
         allShow : "none",//当显示全部，样式改变
+        todayBorder : '',
+        todayBg : '',
+        todayColor :'',
         //模拟数据
         fakeMessages : [
             {
@@ -198,7 +202,8 @@
               mark : "555577"
             },
           ],
-          messages : [] //存放后台数据  
+          messages : [] ,
+          backMessages : [] //存放后台数据  
       }
     },
 
@@ -212,9 +217,9 @@
     },
     mounted () {
       //请求后台数据
-      const url="39.108.0.22/api/store"
-      this.$ajax.get(url).then(function (response) {
-        message = JSON.parse(response)
+      const url="39.108.0.22:8088/api/show"
+      axios.get(url).then(function (response) {
+        this.backMessages = JSON.parse(response)
       })
       .catch(function (error) {
       console.log(error);
@@ -231,6 +236,15 @@
       this.middleDivCalendar = {year: new Date().getFullYear(), month: new Date().getMonth()+1 }
       // 当日历收起的时候，日历高度刚好只够显示三行日期
       this.calendarContainerHeight = 3*(document.querySelector('.date-block').getBoundingClientRect().height) + 'px'
+
+      // //今天
+      // if(this.middleDivCalendar.year == new Date().getFullYear() && this.middleDivCalendar.month == new Date().getMonth() 
+      // && this.i == new Date().getDate()) {
+      //   this.todayBorder = "5rem"
+      //   this.todayBg = "white"
+      //   this.todayColor = "#48a2a1"
+      // }
+
       this.$nextTick(function () {
         // DOM更新完成后
         const today = document.querySelector('.todayBlock')      
@@ -252,7 +266,7 @@
 
         // 监听日历的收起与展开，改变日历的高度
         const height = document.querySelector('.date-block').getBoundingClientRect().height + 'px'
-        this.calendarContainerHeight = this.isShow ? '25rem' : height
+        this.calendarContainerHeight = this.isShow ? '27rem' : height
       
         if (!this.isShow){
           const today = document.querySelector('.todayBlock')
@@ -339,7 +353,7 @@
         this.allHide = "block"
         this.allShow = "none"
         //循环获取该日期预约内容
-        let array = this.fakeMessages
+        let array = this.backMessages
         for(let i=0;i<array.length;i++)
         {
           let obj = array[i].date       
@@ -370,7 +384,7 @@
         this.allHide = "none"
         this.allShow = "block"
         //循环获取该日期预约内容
-        let array = this.fakeMessages
+        let array = this.backMessages
         for(let i=0;i<array.length;i++)
         {
             this.messages.push(array[i])
@@ -418,9 +432,8 @@
       deleMessage() {        
         if(this.indexMark == this.markText) //如标识符匹配，传要删除的预约信息id给后端
         {
-          const url = "39.108.0.22/api/store";
-          this.$ajax
-          .post(url, {
+          const url = "39.108.0.22:8088/api/destroy";
+          axios.post(url, {
             id: this.indexId
           })
           .catch(err => {
@@ -511,10 +524,10 @@
         color:white;
         border-radius: 5rem;
         background:#48a2a1;
-        height:2rem;
-        width:2rem;
+        height:2.3rem;
+        width:2.3rem;
         display: block;
-        line-height: 2rem;
+        line-height: 2.3rem;
         opacity:0.7;
         margin:auto;
       }

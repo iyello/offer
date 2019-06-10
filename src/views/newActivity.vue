@@ -1,7 +1,7 @@
 <template>
   <div id="newActivity" ref="addPage">
     <img class="close" @click="close" src="../../static/img/close.png">
-    <div v-if="unsubmit" style="margin:5rem 3.5rem;">     
+    <div v-if="unsubmit" style="margin:4.5rem 3.5rem;">
       <div class="main">
         <h6>新建活动</h6>
         <h3>预约</h3>
@@ -20,20 +20,19 @@
               >
               <p v-if="noname">请输入姓名</p>
               <h5>方向</h5>
-              <img class="more" @click="isShow" src="../../static/img/more.png">
               <input
                 @input="getdire"
                 @blur="msgdire"
                 v-model="direction"
                 id="direction"
-                @click="show4=false"
                 maxlength="9"
                 class="direction"
-                v-bind:class="{'direction':a}"
+                v-bind:class="{'direcolor':a}"
                 readonly="readonly"
                 type="text"
                 name="direction"
               >
+              <img class="more" @click="isShow" src="../../static/img/more.png">
               <ul class="dire" v-if="show4">
                 <div class="dires">
                   <li @click="getValue" value="策划方向">策划方向</li>
@@ -98,7 +97,17 @@
                 class="location"
                 type="text"
                 name="location"
+                readonly="readonly"
+                v-bind:class="{'direcolor':a}"
               >
+              <img class="more" @click="isShow" src="../../static/img/more.png">
+              <ul class="dire" v-if="show4">
+                <div class="locas">
+                  <li @click="getValue2" value="办公室">办公室</li>
+                  <li @click="getValue2" value="七楼茶水间">七楼茶水间</li>
+                  <li @click="getValue2" value="八楼茶水间">八楼茶水间</li>
+                </div>
+              </ul>
               <p v-if="noloca">请输入地点</p>
             </form>
           </div>
@@ -106,6 +115,8 @@
         <transition name="toChange3">
           <div v-if="show3" id="toChange3">
             <form class="inputbox">
+              <br>
+              <p style="font-size:1.5rem; color:#126964;">{{MonthAndDay}}</p>
               <h5>开始</h5>
               <div class="date-time-input">
                 <input
@@ -143,9 +154,20 @@
         </transition>
       </div>
       <div class="button">
-        <img @click="priorclick" v-if="btn" id="prior" class="prior" src="../../static/img/prior.png">
+        <img
+          @click="priorclick"
+          v-if="btn"
+          id="prior"
+          class="prior"
+          src="../../static/img/prior.png"
+        >
         <img @click="priorsclick" v-if="btns" class="priors" src="../../static/img/priors.png">
-        <img @click="nextclick(),clickJump()" id="next" class="next" src="../../static/img/next.png">
+        <img
+          @click="nextclick(),clickJump()"
+          id="next"
+          class="next"
+          src="../../static/img/next.png"
+        >
       </div>
     </div>
 
@@ -183,8 +205,8 @@ export default {
   },
   data() {
     return {
-      transitionName: 'slide-left',
-			clientHeight:"",
+      transitionName: "slide-left",
+      clientHeight: "",
       name: "",
       noname: "",
       direction: "",
@@ -212,48 +234,46 @@ export default {
       submitted: false,
       divindex: 1,
       btnindex: 1,
-      MonthAndDay : "",
+      a: false,
+      MonthAndDay: "",
       warn1: "",
       warn2: "",
       warn3: "",
-      count:"",//倒计时
+      count: "" ,//倒计时
     };
-	},
-	mounted()
-	{
+  },
+  mounted() {
     //防止安卓软键盘使布局乱
 
     //路由传送日期
-      let routerParams = this.$route.query.date
-      this.MonthAndDay = routerParams
+    let routerParams = this.$route.query.date;
+    this.MonthAndDay = routerParams;
 
-		// 获取浏览器可视区域高度
-    this.clientHeight =   `${document.documentElement.clientHeight}`          //document.body.clientWidth;
+    // 获取浏览器可视区域高度
+    this.clientHeight = `${document.documentElement.clientHeight}`; //document.body.clientWidth;
     //console.log(self.clientHeight);
     window.onresize = function temp() {
       this.clientHeight = `${document.documentElement.clientHeight}`;
     };
+  },
 
-	},
-
-	watch :
-	{
-		// 如果 `clientHeight` 发生改变，这个函数就会运行
-      clientHeight: function () {
-      this.changeFixed(this.clientHeight)
-      },
-      
-	},
+  watch: {
+    // 如果 `clientHeight` 发生改变，这个函数就会运行
+    clientHeight: function() {
+      this.changeFixed(this.clientHeight);
+    }
+  },
 
   methods: {
-		changeFixed(clientHeight){                        //动态修改样式
-        // console.log(clientHeight);
-        this.$refs.addPage.style.height = clientHeight+'px';
-     },
+    changeFixed(clientHeight) {
+      //动态修改样式
+      // console.log(clientHeight);
+      this.$refs.addPage.style.height = clientHeight + "px";
+    },
     close() {
-			this.$router.push('/index') //路由跳转页面 
-		},      
-      getname() {
+      this.$router.push("/index"); //路由跳转页面
+    },
+    getname() {
       this.noname = false;
     },
     getdire() {
@@ -367,9 +387,8 @@ export default {
         } else if (this.start > this.end) {
           this.bigend = true;
         } else {
-          var url = "39.108.0.22/api/store";
-          this.$ajax
-            .post(url, {
+          var url = "39.108.0.22:8088/api/store";
+          axios.post(url, {
               name: this.name,
               direction: this.direction,
               telephone: this.telephone,
@@ -377,39 +396,40 @@ export default {
               mark: this.mark,
               location: this.location,
               start: this.start,
-              end: this.end
+              end: this.end,
+              date: this.MonthAndDay
             })
             .catch(err => {
               console.log(err);
             });
-          (this.unsubmit = false), (this.submitted = true);
+           (this.unsubmit = false), (this.submitted = true);
         }
       }
     },
     //几秒后进入跳转页面
-    clickJump(){
-        const timejump = 5;
-        if(this.submitted == true) {
-          if(!this.timer){
-            this.count = timejump ;
-            this.show = false;
-            this.timer = setInterval(()=>{
-            if(this.count > 0 && this.count <= timejump ){
-                this.count--;
-            }else{
-                this.show = true;
-                clearInterval(this.timer);
-                this.timer = null;
-                //跳转的页面写在此处
-                this.$router.push({path: '/index'});
-              }
-            },100)
-          }
+    clickJump() {
+      const timejump = 5;
+      if (this.submitted == true) {
+        if (!this.timer) {
+          this.count = timejump;
+          this.show = false;
+          this.timer = setInterval(() => {
+            if (this.count > 0 && this.count <= timejump) {
+              this.count--;
+            } else {
+              this.show = true;
+              clearInterval(this.timer);
+              this.timer = null;
+              //跳转的页面写在此处
+              this.$router.push({ path: "/index" });
+            }
+          }, 100);
         }
+      }
     },
     priorclick() {
-			this.$router.push('/index') //路由跳转页面 
-		},
+      this.$router.push("/index"); //路由跳转页面
+    },
     priorsclick() {
       this.divindex--;
       if (this.divindex == 1) {
@@ -437,12 +457,20 @@ export default {
       this.show4 = !this.show4;
     },
     back() {
-			this.$router.push('/index') //路由跳转页面 
-		},
+      this.$router.push("/index"); //路由跳转页面
+    },
     getValue(event) {
       var e = event.currentTarget;
       var states = e.innerHTML;
       this.direction = states;
+      this.nodire = false;
+      this.a = false;
+      this.show4 = !this.show4;
+    },
+    getValue2(event) {
+      var e = event.currentTarget;
+      var states = e.innerHTML;
+      this.location = states;
       this.nodire = false;
       this.a = false;
       this.show4 = !this.show4;
@@ -460,7 +488,7 @@ export default {
     select2(val) {
       this.noend = false;
       this.end = val;
-      if(this.end > this.start) {
+      if (this.end > this.start) {
         this.begin = false;
       }
     }
