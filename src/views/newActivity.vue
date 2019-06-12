@@ -387,7 +387,7 @@ export default {
         } else if (this.start > this.end) {
           this.bigend = true;
         } else {
-          var url = "39.108.0.22:8088/api/store";
+          var url = "http://39.108.0.22:8088/api/store";
           axios.post(url, {
               name: this.name,
               direction: this.direction,

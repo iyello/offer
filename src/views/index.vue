@@ -217,8 +217,8 @@ import axios from 'axios';
     },
     mounted () {
       //请求后台数据
-      const url="39.108.0.22:8088/api/show"
-      axios.get(url).then(function (response) {
+      const url="http://39.108.0.22:8088/api/show"
+      axios.post(url,{}).then(function (response) {
         this.backMessages = JSON.parse(response)
       })
       .catch(function (error) {
@@ -432,7 +432,7 @@ import axios from 'axios';
       deleMessage() {        
         if(this.indexMark == this.markText) //如标识符匹配，传要删除的预约信息id给后端
         {
-          const url = "39.108.0.22:8088/api/destroy";
+          const url = "http://39.108.0.22:8088/api/destroy";
           axios.post(url, {
             id: this.indexId
           })

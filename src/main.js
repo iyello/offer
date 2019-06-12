@@ -5,7 +5,7 @@ import axios from 'axios'
 import dateTime from 'vue-date-time-m'
 Vue.component('data-time', dateTime)
 
-Vue.prototype.$ajax = axios
+// Vue.prototype.$ajax = axios
 
 Vue.config.productionTip = false
 
